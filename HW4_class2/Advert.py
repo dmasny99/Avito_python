@@ -1,10 +1,6 @@
 import json
 
 
-class CustomError(Exception):
-    pass
-
-
 class JsonParser:
     """Parses json objects and creates attributes of python object"""
     def __init__(self, json_object: dict):
@@ -26,7 +22,7 @@ class ParentAdvert:  # created because of mixin properties
         self.__dict__ = JsonParser(json_object).__dict__
         if 'price' in JsonParser(json_object).__dict__:
             if JsonParser(json_object).__dict__['price'] < 0:
-                raise CustomError('ValueError: must be >= 0')
+                raise Exception('ValueError: must be >= 0')
         else:
             self.price = 0
 
