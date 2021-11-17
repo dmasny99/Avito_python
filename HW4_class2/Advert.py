@@ -5,42 +5,57 @@ class JsonParser:
     """Parses json objects and creates attributes of python object"""
     def __init__(self, json_object: dict):
         for key, value in json_object.items():
-            if key == 'location':
+            if isinstance(value, dict):
                 value = JsonParser(value)
             setattr(self, key, value)
 
 
 class ColorizeMixin:
     """Colorizes given text"""
-    def __repr__(self):
-        return f'\033[1;{self.repr_color_code};40m {self.title} | {self.price} ₽'
+    def __repr__(self) -> str:
+        text = super().__repr__()
+        return f'\033[1;{self.repr_color_code};40m {text} ₽'
 
 
-class ParentAdvert:  # created because of mixin properties
+class BaseAdvert(JsonParser):  # created because of mixin properties
     """Creates advert object"""
     def __init__(self, json_object: dict):
-        self.__dict__ = JsonParser(json_object).__dict__
-        if 'price' in JsonParser(json_object).__dict__:
-            if JsonParser(json_object).__dict__['price'] < 0:
-                raise Exception('ValueError: must be >= 0')
+        super().__init__(json_object)
+        self._price = 0
+        
+    def __getattribute__(self, name):
+        if name == 'class_':
+            return object.__getattribute__(self, 'class')
         else:
-            self.price = 0
+            return object.__getattribute__(self, name)
 
-    def __repr__(self):
+    @property
+    def price(self) -> float:
+        return self._price
+
+    @price.setter
+    def price(self, price_value: float):
+        if price_value < 0:
+            raise Exception('ValueError: must be >= 0')
+        elif price_value >= 0:
+            self._price = price_value
+
+    @price.deleter
+    def price(self):
+        self._price = None
+
+    def __repr__(self) -> str:
         return f'{self.title} | {self.price}'
 
 
-class Advert(ColorizeMixin, ParentAdvert):
+class Advert(ColorizeMixin, BaseAdvert):
     """Creates advert object"""
-    repr_color_code = 33 # yellow
-
-    def __init__(self, json_object: dict):
-        super().__init__(json_object)
+    repr_color_code = 33  # yellow
 
 
 if __name__ == '__main__':
     lesson_str = """{"title": "python",
-                     "price": 0,
+                     "price": 1,
                      "location": {"address": "город Москва, Лесная, 7", "metro_stations": ["Белорусская"]}}"""
     pet_str = """{"title": "Вельш-корги",
                   "price": 1000,
@@ -48,7 +63,7 @@ if __name__ == '__main__':
                   "location": {"address": "сельское поселение Ельдигинское, поселок санатория Тишково, 25"}}"""
     ad = Advert(json.loads(lesson_str))
     pet = Advert(json.loads(pet_str))
-    print(ad.location.address)
-    print(ad.price)
-    print(ad)
+    print(ad.location.metro_stations)
+    print(pet.class_)
     print(pet)
+    ad.price = -1
