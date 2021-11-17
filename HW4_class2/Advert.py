@@ -21,7 +21,6 @@ class BaseAdvert(JsonParser):  # created because of mixin properties
     """Creates advert object"""
     def __init__(self, json_object: dict):
         super().__init__(json_object)
-        self._price = 0
         
     def __getattribute__(self, name):
         if name == 'class_':
