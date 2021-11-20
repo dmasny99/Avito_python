@@ -5,10 +5,7 @@ class Color:
     MOD = 'm'
     
     def __init__(self, r: int, g: int, b: int):
-        self.rgb = r, g, b # write validation method at home
-
-    # def _validation(number: int):
-    #     return(max(min(255, number)))
+        self.rgb = tuple(map(lambda color: max(min(255, color), 0), (r, g, b)))
 
     def __str__(self):
         return (f'{self.START};{self.rgb[0]};{self.rgb[1]};{self.rgb[2]}{self.MOD}●{self.END}{self.MOD}')
@@ -39,6 +36,6 @@ class Color:
         return self.__mul__(constant)
 
 if __name__ == '__main__':
-    orange1 = Color(255, 7, 0)
-    orange2 = Color(255, 7, 0)
-    print(0.3 * orange1)
+    orange1 = Color(300, 300, 300)
+    print(orange1)
+    print(orange1.rgb)

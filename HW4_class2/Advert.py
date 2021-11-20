@@ -14,7 +14,7 @@ class ColorizeMixin:
     """Colorizes given text"""
     def __repr__(self) -> str:
         text = super().__repr__()
-        return f'\033[1;{self.repr_color_code};40m {text} ₽'
+        return f'\033[1;{self.repr_color_code};40m {text}'
 
 
 class BaseAdvert(JsonParser):  # created because of mixin properties
@@ -44,7 +44,7 @@ class BaseAdvert(JsonParser):  # created because of mixin properties
         self._price = None
 
     def __repr__(self) -> str:
-        return f'{self.title} | {self.price}'
+        return f'{self.title} | {self.price} ₽'
 
 
 class Advert(ColorizeMixin, BaseAdvert):
